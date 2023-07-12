@@ -21,10 +21,11 @@ public interface BidRepository extends CrudRepository<Bid, Integer> {
     Optional<FrequentBid> findFrequentBid(Integer id);
 
     @Query("SELECT new ru.skypro.lessons.courseworkspring.DTO." +
-            "FrequentBid(b.bidderName , MAX (b.bidderName)) " +
+            "FrequentBid(b.bidderName , MAX (b.dateTime)) " +
             "FROM Bid  b JOIN FETCH Lot l WHERE l.id=?1 AND l.bidList=b " +
             "GROUP BY b.bidderName ORDER BY COUNT(b.bidderName) DESC")
     List<FrequentBid> findFrequentBid2(Integer id);
+
 
 
 
