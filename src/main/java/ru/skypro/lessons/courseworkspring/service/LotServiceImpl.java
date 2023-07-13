@@ -19,7 +19,6 @@ import ru.skypro.lessons.courseworkspring.model.Bid;
 import ru.skypro.lessons.courseworkspring.model.Lot;
 import ru.skypro.lessons.courseworkspring.repository.BidRepository;
 import ru.skypro.lessons.courseworkspring.repository.LotRepository;
-import ru.skypro.lessons.courseworkspring.repository.PagingAndSortingRepository;
 
 
 import java.io.FileWriter;
@@ -32,12 +31,10 @@ public class LotServiceImpl implements LotService {
 
     private final LotRepository lotRepository;
     Logger logger = LoggerFactory.getLogger(LotServiceImpl.class);
-    private final PagingAndSortingRepository pagingAndSortingRepository;
     private final BidRepository bidRepository;
 
-    public LotServiceImpl(LotRepository lotRepository, PagingAndSortingRepository pagingAndSortingRepository, BidRepository bidRepository) {
+    public LotServiceImpl(LotRepository lotRepository, BidRepository bidRepository) {
         this.lotRepository = lotRepository;
-        this.pagingAndSortingRepository = pagingAndSortingRepository;
         this.bidRepository = bidRepository;
     }
     public void createLot(CreatingLot creatingLot) {
@@ -59,7 +56,7 @@ public class LotServiceImpl implements LotService {
             LotWrongStatusException e = new LotWrongStatusException("Введен некорректный статус");
             logger.error("Received the invalid status {}", status, e);
         }
-        Page<Lot> lotPage = pagingAndSortingRepository.findAllByStatus(PageRequest.of(page, 10), status);
+        Page<Lot> lotPage = lotRepository.findAllByStatus(PageRequest.of(page, 10), status);
         List<LotDTO> lotDTOList = lotPage.stream().map(LotDTO::fromLot).collect(Collectors.toList());
         logger.debug("Received lots {} with status {} on page {}", lotDTOList, status, page);
         return lotDTOList;
@@ -67,13 +64,17 @@ public class LotServiceImpl implements LotService {
 
     @Override
     public ResponseEntity<Resource> exportLotInFile() throws IOException {
-        logger.info("Was invoked method for getting lots in CRV");
+
+        logger.info("Was invoked method for getting lots in CSV");
         String [] HEADERS = {"id","title","status","lastBidder","currentPrice"};
-        String fileName = "lots.crv";
+        String fileName = "lots.csv";
         FileWriter out = new FileWriter(fileName);
-        try (final CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT.withHeader(HEADERS))) {
-            List<LotCRV> lotCRVList = lotRepository.findAll().stream().map(LotCRV :: fromLot).toList();
-            lotCRVList.forEach(lot -> {
+        final CSVPrinter printer = new CSVPrinter(out,
+                CSVFormat.DEFAULT.withHeader(HEADERS));
+        try (printer) {
+            List<LotCSV> lotCSVList = lotRepository.findAll().stream().
+                    map(LotCSV:: fromLot).toList();
+            lotCSVList.forEach(lot -> {
                 try {
                     printer.printRecord(lot);
                 } catch (IOException e) {
@@ -81,8 +82,10 @@ public class LotServiceImpl implements LotService {
                 }
             });
         }
+
         Resource resource = new PathResource(fileName);
-        logger.debug("Received the file CRV");
+        logger.debug("Received the file CSV");
+
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -104,7 +107,7 @@ public class LotServiceImpl implements LotService {
     }
 
     @Override
-    public void addBid(Integer id, String bidderName) {
+    public void addBid(Integer id, BidDTO bidDTO) {
 
         logger.info("Was invoked method for doing bid");
         Lot lot = lotRepository.findById(id).orElseThrow(() -> {
@@ -116,7 +119,7 @@ public class LotServiceImpl implements LotService {
             LotWrongStatusException e = new LotWrongStatusException("лот в неверном статусе");
             logger.error("The lot has wrong status", e);
         } else {
-            Bid bid = new Bid(bidderName);
+            Bid bid = new Bid(bidDTO.getBidderName());
             List<Bid> bidList = lot.getBidList();
             bidList.add(bid);
             lot.setBidList(bidList);

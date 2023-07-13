@@ -15,9 +15,10 @@ public interface LotService {
 
     ResponseEntity<Resource> exportLotInFile() throws IOException;
 
+
     void stopBargaining(Integer id);
 
-    void addBid(Integer id, String bidderName);
+    void addBid(Integer id, BidDTO bidDTO);
 
     void startBargaining(Integer id);
 

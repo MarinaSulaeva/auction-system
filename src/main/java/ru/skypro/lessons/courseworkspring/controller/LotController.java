@@ -33,6 +33,7 @@ public class LotController {
         return lotService.getLotsByStatus(page, status);
     }
 
+
     @GetMapping(value = "/export", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<Resource> exportLotInFile() throws IOException {
         return lotService.exportLotInFile();
@@ -44,8 +45,8 @@ public class LotController {
     }
 
     @PostMapping("/{id}/bid")
-    public void addBid(@PathVariable Integer id, @RequestBody String bidderName) {
-        lotService.addBid(id, bidderName);
+    public void addBid(@PathVariable Integer id, @RequestBody BidDTO bidDTO) {
+        lotService.addBid(id, bidDTO);
     }
 
     @PostMapping("/{id}/start")
