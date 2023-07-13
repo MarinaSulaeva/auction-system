@@ -26,8 +26,4 @@ public interface LotService {
     FrequentBidInterface getTheFrequentBid(Integer id);
 
     BidDTO getTheFirstBid(Integer id);
-
-    BidDTO getTheFrequentBid1(Integer id);
-
-    BidDTO getTheFrequentBid2(Integer id);
 }

@@ -165,17 +165,6 @@ public class LotServiceImpl implements LotService {
     @Override
     public FrequentBidInterface getTheFrequentBid(Integer id) {
         logger.info("Was invoked method fot getting the first bid on lot # {}", id);
-//        BidDTO bidDTO = BidDTO.formBid(bidRepository.findFrequentBid(id).orElseThrow(() -> {
-//            LotIdException e = new LotIdException("Введен некорректный id");
-//            logger.error("Received the invalid id {}", id, e);
-//            return e;
-//        }));
-
-//        BidDTO bidDTO = BidDTO.formCreatingBid(bidRepository.findFrequentCreatingBid(id).orElseThrow(() -> {
-//            LotIdException e = new LotIdException("Введен некорректный id");
-//            logger.error("Received the invalid id {}", id, e);
-//            return e;
-//        }));
         FrequentBidInterface frequentBidInterface = bidRepository.
                 findFrequentBidInterface(id).orElseThrow(() -> {
             LotIdException e = new LotIdException("Введен некорректный id");
@@ -184,37 +173,5 @@ public class LotServiceImpl implements LotService {
         });
         logger.debug("Received the frequent bid {} on the lot # {}", frequentBidInterface, id);
         return frequentBidInterface;
-    }
-
-
-
-    @Override
-    public BidDTO getTheFrequentBid1(Integer id) {
-        logger.info("Was invoked method fot getting the first bid on lot # {}", id);
-
-//        BidDTO bidDTO = BidDTO.formCreatingBid(bidRepository.findFrequentCreatingBid(id).orElseThrow(() -> {
-//            LotIdException e = new LotIdException("Введен некорректный id");
-//            logger.error("Received the invalid id {}", id, e);
-//            return e;
-//        }));
-
-        BidDTO bidDTO = BidDTO.fromFrequentBid(bidRepository.findFrequentBid(id).orElseThrow(() -> {
-            LotIdException e = new LotIdException("Введен некорректный id");
-            logger.error("Received the invalid id {}", id, e);
-            return e;
-        }));
-
-        logger.debug("Received the frequent bid {} on the lot # {}", bidDTO, id);
-        return bidDTO;
-    }
-
-    @Override
-    public BidDTO getTheFrequentBid2(Integer id) {
-        logger.info("Was invoked method fot getting the first bid on lot # {}", id);
-
-        BidDTO bidDTO = BidDTO.fromFrequentBid(bidRepository.findFrequentBid2(id).get(0));
-
-        logger.debug("Received the frequent bid {} on the lot # {}", bidDTO, id);
-        return bidDTO;
     }
 }

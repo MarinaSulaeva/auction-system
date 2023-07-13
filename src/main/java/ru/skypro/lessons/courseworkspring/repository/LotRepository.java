@@ -9,8 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface LotRepository extends CrudRepository <Lot, Integer> {
-
-
     @Override
     Optional<Lot> findById(Integer integer);
 

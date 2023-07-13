@@ -26,7 +26,9 @@ public class FullLotDTO {
         fullLotDTO.setDescription(lot.getDescription());
         fullLotDTO.setStartPrice(lot.getStartPrice());
         fullLotDTO.setBidPrice(lot.getBidPrice());
-        fullLotDTO.setLastBid(lot.getBidList().get(lot.getBidList().size()-1));
+        if (lot.getBidList().size() != 0) {
+            fullLotDTO.setLastBid(lot.getBidList().get(lot.getBidList().size()-1));
+        }
         fullLotDTO.setCurrentPrice(lot.getBidList().size()*lot.getBidPrice()+lot.getStartPrice());
         return fullLotDTO;
     }

@@ -67,14 +67,4 @@ public class LotController {
     public BidDTO getTheFirstBid(@PathVariable Integer id) {
         return lotService.getTheFirstBid(id);
     }
-
-    @GetMapping("/{id}/frequent1")
-    public BidDTO getTheFrequentBid1(@PathVariable Integer id) {
-        return lotService.getTheFrequentBid1(id);
-    }
-
-    @GetMapping("/{id}/frequent2")
-    public BidDTO getTheFrequentBid2(@PathVariable Integer id) {
-        return lotService.getTheFrequentBid1(id);
-    }
 }
